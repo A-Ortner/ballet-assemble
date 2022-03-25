@@ -106,6 +106,22 @@ export function getLocationFromCurrentCell(activeCell: any, content: String[]) {
   return ls;
 }
 
+/* description: Takes two arrays as input and compares them by their first entry
+ * a, b: arrays containing a number as their first entry
+ * returns: number */
+function cmp(a: (number | string)[], b: (number | string)[]) {
+  if (typeof a[0] !== 'number' || typeof b[0] !== 'number') {
+    throw new Error('Invalid data type.');
+  }
+  if (a[0] < b[0]) {
+    return -1;
+  } else if (b[0] < a[0]) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 /* description: Takes the set of locations returned by slice() and extract the given locations from the original code stored in ctsSplit.
  * Every location contains the "line" attribute, which indicates the code line that was extracted (count starts at 1).
  * Since the ctsSplit array starts at 0, an index shift needs to be performed: line = 1 of a location corresponds to
@@ -122,14 +138,17 @@ export function getCodeFromSlice(slicedLoc: LocationSet, ctsSplit: string[]) {
     throw new Error('Slice not found.');
   }
 
-  let map = new Map();
+  let codelines = [];
   for (let i = 0; i < slicedLoc.items.length; i++) {
     const line = slicedLoc.items[i].first_line;
     // [line - 1] because location type starts at 1, not 0
-    map.set(line, ctsSplit[line - 1]);
+    let tmp = [];
+    tmp.push(line);
+    tmp.push(ctsSplit[line - 1]);
+    codelines.push(tmp);
   }
 
-  let arraySorted = [...map.entries()].sort();
+  let arraySorted = codelines.sort((a, b) => cmp(a, b));
   let finalSlice = [];
   for (let i = 0; i < arraySorted.length; i++) {
     finalSlice.push(arraySorted[i][1]);
