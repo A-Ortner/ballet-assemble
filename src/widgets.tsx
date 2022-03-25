@@ -15,7 +15,7 @@ export class ConfirmWidget extends ReactWidget {
       <div className="assemble-featureSubmittedConfirm">
         <p>
           {' '}
-          The following feature would be submitted to the upstream Ballet
+          The following feature will be submitted to the upstream Ballet
           project:{' '}
         </p>
         <div>
